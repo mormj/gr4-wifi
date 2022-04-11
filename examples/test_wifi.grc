@@ -9,7 +9,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: qt_gui
+    generate_options: no_gui
     hier_block_src_path: '.:'
     id: test_wifi
     max_nouts: '0'
@@ -19,7 +19,7 @@ options:
     realtime_scheduling: ''
     run: 'True'
     run_command: '{python} -u {filename}'
-    run_options: prompt
+    run_options: run
     sizing_mode: fixed
     thread_safe_setters: ''
     title: Not titled yet
@@ -107,6 +107,41 @@ blocks:
     coordinate: [872, 276.0]
     rotation: 0
     state: disabled
+- name: dbg
+  id: blocks_message_debug
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    domain: cpu
+    en_uvec: 'False'
+    showports: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [928, 436.0]
+    rotation: 180
+    state: enabled
+- name: decode
+  id: wifi_decode_packetized
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    debug: 'False'
+    domain: cpu
+    log: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    showports: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1232, 452.0]
+    rotation: 180
+    state: true
 - name: fft_fft_0
   id: fft_fft
   parameters:
@@ -115,18 +150,18 @@ blocks:
     alias: ''
     comment: ''
     direction: 'True'
-    domain: cpu
+    domain: cuda
     fft_size: '64'
     maxoutbuf: '0'
     minoutbuf: '0'
-    shift: 'False'
+    shift: 'True'
     showports: 'False'
-    window: '0'
+    window: np.ones(64)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1016, 28.0]
+    coordinate: [1056, 44.0]
     rotation: 0
     state: true
 - name: fileio_file_source_0
@@ -136,7 +171,7 @@ blocks:
     alias: ''
     comment: ''
     domain: cpu
-    filename: '''/data/data/wifi_capt_2462_20MHz.fc32'''
+    filename: '''/data/data/cropcircles/wifi_synth_1500_1kpad_20MHz_10s_MCS0.fc32'''
     itemsize: '8'
     len: '0'
     maxoutbuf: '0'
@@ -148,7 +183,33 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [64, 204.0]
+    coordinate: [88, 148.0]
+    rotation: 0
+    state: true
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import time
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [152, 388.0]
+    rotation: 0
+    state: true
+- name: import_0_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import numpy as np
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [408, 196.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_0
@@ -169,9 +230,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1512, 140.0]
+    coordinate: [1576, 172.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_time_sink_0_0
   id: qtgui_time_sink
   parameters:
@@ -211,7 +272,62 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1056, 484.0]
+    coordinate: [752, 508.0]
+    rotation: 0
+    state: disabled
+- name: snippet_0
+  id: snippet
+  parameters:
+    alias: ''
+    code: 'end = time.time()
+
+      elapsed = end - self.startt
+
+      #print(f"Received: {self.dbg.num_messages()} in {elapsed} seconds")
+
+      print(f"Received: {self.dbg.num_messages()} in {elapsed} seconds")'
+    comment: ''
+    priority: '0'
+    section: main_after_stop
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [336, 484.0]
+    rotation: 0
+    state: true
+- name: snippet_0_0
+  id: snippet
+  parameters:
+    alias: ''
+    code: self.startt = time.time()
+    comment: ''
+    priority: '0'
+    section: main_after_init
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [344, 396.0]
+    rotation: 0
+    state: true
+- name: streamops_head_0
+  id: streamops_head
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    domain: cpu
+    itemsize: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nitems: '25000000'
+    showports: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [288, 300.0]
     rotation: 0
     state: disabled
 - name: wifi_frame_equalizer_0
@@ -222,8 +338,10 @@ blocks:
     alias: ''
     bw: ''
     comment: ''
+    debug: 'False'
     domain: cpu
     freq: ''
+    log: 'False'
     maxoutbuf: '0'
     minoutbuf: '0'
     showports: 'False'
@@ -231,7 +349,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1192, 44.0]
+    coordinate: [1328, 20.0]
+    rotation: 0
+    state: disabled
+- name: wifi_packetize_frame_0
+  id: wifi_packetize_frame
+  parameters:
+    affinity: ''
+    algo: '0'
+    alias: ''
+    bw: 20e6
+    comment: ''
+    debug: 'False'
+    domain: cpu
+    freq: 2462e6
+    log: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    showports: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1216, 180.0]
     rotation: 0
     state: true
 - name: wifi_pre_sync_0
@@ -241,7 +381,9 @@ blocks:
     alias: ''
     buffer_size: '65536'
     comment: ''
+    debug: 'False'
     domain: cuda
+    log: 'False'
     maxoutbuf: '0'
     minoutbuf: '0'
     showports: 'False'
@@ -250,7 +392,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [352, 32.0]
+    coordinate: [344, 36.0]
     rotation: 0
     state: true
 - name: wifi_sync_long_0
@@ -259,7 +401,9 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
+    debug: 'False'
     domain: cuda
+    log: 'False'
     maxoutbuf: '0'
     minoutbuf: '0'
     showports: 'False'
@@ -268,7 +412,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [816, 44.0]
+    coordinate: [840, 44.0]
     rotation: 0
     state: enabled
 - name: wifi_sync_short_0
@@ -277,7 +421,9 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
+    debug: 'False'
     domain: cuda
+    log: 'False'
     maxoutbuf: '0'
     min_plateau: '2'
     minoutbuf: '0'
@@ -287,13 +433,18 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [632, 32.0]
+    coordinate: [632, 36.0]
     rotation: 0
     state: true
 
 connections:
+- [decode, out, dbg, store]
 - [fft_fft_0, '0', wifi_frame_equalizer_0, '0']
+- [fft_fft_0, '0', wifi_packetize_frame_0, '0']
+- [fileio_file_source_0, '0', streamops_head_0, '0']
 - [fileio_file_source_0, '0', wifi_pre_sync_0, '0']
+- [streamops_head_0, '0', wifi_pre_sync_0, '0']
+- [wifi_packetize_frame_0, pdus, decode, pdus]
 - [wifi_pre_sync_0, '0', blocks_null_sink_0, '0']
 - [wifi_pre_sync_0, '0', wifi_sync_short_0, '0']
 - [wifi_pre_sync_0, '1', blocks_null_sink_0_0, '0']

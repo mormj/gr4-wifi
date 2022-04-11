@@ -11,29 +11,25 @@
 #pragma once
 
 #include "equalizer/base.h"
-#include "equalizer/comb.h"
-#include "equalizer/lms.h"
-#include "equalizer/ls.h"
-#include "equalizer/sta.h"
-#include "utils.h"
 #include "viterbi_decoder/viterbi_decoder.h"
 #include <gnuradio/wifi/constellations.h>
-#include <gnuradio/wifi/frame_equalizer.h>
 #include <gnuradio/wifi/enums.h>
-
+#include <gnuradio/wifi/packetize_frame.h>
+#include <mutex>
 namespace gr {
 namespace wifi {
 
-class frame_equalizer_cpu : public virtual frame_equalizer
+class packetize_frame_cpu : public virtual packetize_frame
 {
 public:
-    frame_equalizer_cpu(block_args args);
+    packetize_frame_cpu(block_args args);
     virtual work_return_code_t
     work(std::vector<block_work_input_sptr>& work_input,
          std::vector<block_work_output_sptr>& work_output) override;
 
 private:
-    void set_algorithm(equalizer_type algo); // TODO replace with auto callback
+    enum { WAITING_FOR_TAG, FINISH_LAST_FRAME } d_state = WAITING_FOR_TAG;
+    void set_algorithm(equalizer_type algo);
     bool parse_signal(uint8_t* signal);
     bool decode_signal_field(uint8_t* rx_bits);
     void deinterleave(uint8_t* rx_bits);
@@ -71,6 +67,14 @@ private:
 
     size_t ntags_rx = 0;
     size_t ntags_tx = 0;
+
+    int packet_cnt = 0;
+    pmtf::pmt d_pdu = nullptr;
+
+    std::vector<gr_complex> samples_buf;
+    bool new_packet = false;
+
+    void process_symbol(gr_complex* in, gr_complex* symbols, uint8_t* out);
 };
 
 } // namespace wifi

@@ -110,9 +110,9 @@ work_return_code_t sync_short_cuda::work(std::vector<block_work_input_sptr>& wor
                 // std::cout << "SHORT Frame at " << nwritten + i << std::endl;
                 insert_tag(nwritten + i, d_freq_offset, nread + i, work_output[0]);
                 packet_cnt++;
-                if (packet_cnt % 100 == 0) {
-                    std::cout << "sync_short: " << packet_cnt << std::endl;
-                }
+                // if (packet_cnt % 100 == 0) {
+                //     std::cout << "sync_short: " << packet_cnt << std::endl;
+                // }
             }
 
         } else {

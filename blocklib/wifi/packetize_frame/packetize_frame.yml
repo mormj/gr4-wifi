@@ -1,6 +1,6 @@
 module: wifi
-block: frame_equalizer
-label: Wifi Frame Equalizer
+block: packetize_frame
+label: Wifi Packetize Frame
 blocktype: block
 
 parameters:
@@ -33,13 +33,8 @@ ports:
     direction: input
     type: gr_complex
     shape: 64
--   domain: stream
-    id: out
-    direction: output
-    type: uint8_t
-    shape: 48
 -   domain: message
-    id: symbols
+    id: pdus
     direction: output
     optional: 'true'
 

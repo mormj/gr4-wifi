@@ -16,7 +16,17 @@ parameters:
     settable: false
     grc:
         default: 2
-    
+-   id: log
+    label: Log
+    dtype: bool
+    settable: false
+    default: 'false'
+-   id: debug
+    label: Debug
+    dtype: bool
+    settable: false
+    default: 'false'
+
 ports:
 -   domain: stream
     id: in

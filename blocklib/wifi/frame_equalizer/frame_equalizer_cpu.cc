@@ -26,30 +26,30 @@ frame_equalizer_cpu::frame_equalizer_cpu(block_args args)
     d_frame_mod = d_bpsk;
 
     set_tag_propagation_policy(tag_propagation_policy_t::TPP_DONT);
-    set_algorithm((Equalizer)args.algo);
+    set_algorithm((equalizer_type)args.algo);
 }
 
 
-void frame_equalizer_cpu::set_algorithm(Equalizer algo)
+void frame_equalizer_cpu::set_algorithm(equalizer_type algo)
 {
 
     delete d_equalizer;
 
     switch (algo) {
 
-    case COMB:
+    case equalizer_type::COMB:
         dout << "Comb" << std::endl;
         d_equalizer = new equalizer::comb();
         break;
-    case LS:
+    case equalizer_type::LS:
         dout << "LS" << std::endl;
         d_equalizer = new equalizer::ls();
         break;
-    case LMS:
+    case equalizer_type::LMS:
         dout << "LMS" << std::endl;
         d_equalizer = new equalizer::lms();
         break;
-    case STA:
+    case equalizer_type::STA:
         dout << "STA" << std::endl;
         d_equalizer = new equalizer::sta();
         break;
@@ -216,7 +216,7 @@ frame_equalizer_cpu::work(std::vector<block_work_input_sptr>& work_input,
                     { "freq_offset", d_frame_bytes },
                     { "wifi_start", d_frame_bytes },
                 });
-                // pmtf::wrap dict = pmt::make_dict();
+                // pmtf::pmt dict = pmt::make_dict();
                 // dict = pmt::dict_add(dict, pmt::mp("frame_bytes"),
                 // 					pmt::from_uint64(d_frame_bytes));
                 // dict = pmt::dict_add(dict, pmt::mp("encoding"),
@@ -234,7 +234,7 @@ frame_equalizer_cpu::work(std::vector<block_work_input_sptr>& work_input,
 
         if (d_current_symbol > 2) {
             o++;
-            // pmtf::wrap pdu = pmt::make_dict();
+            // pmtf::pmt pdu = pmt::make_dict();
             // message_port_pub(pmt::mp("symbols"), pmt::cons(pmt::make_dict(),
             // pmt::init_c32vector(48, symbols)));
         }

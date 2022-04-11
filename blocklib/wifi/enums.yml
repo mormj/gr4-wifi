@@ -1,0 +1,6 @@
+equalizer_type:
+  enumerators:
+    - id: LS
+    - id: LMS
+    - id: COMB
+    - id: STA

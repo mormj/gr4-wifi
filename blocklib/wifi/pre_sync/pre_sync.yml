@@ -14,6 +14,16 @@ parameters:
     dtype: size_t
     settable: false
     default: 65536
+-   id: log
+    label: Log
+    dtype: bool
+    settable: false
+    default: 'false'
+-   id: debug
+    label: Debug
+    dtype: bool
+    settable: false
+    default: 'false'
 
 ports:
 -   domain: stream
